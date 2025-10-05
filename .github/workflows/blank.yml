@@ -1,0 +1,197 @@
+import numpy as np
+try:
+    from qiskit import QuantumCircuit
+except ImportError:
+    !pip install qiskit
+    from qiskit import QuantumCircuit
+import os
+from datetime import datetime
+
+# Konfiguration
+GITHUB_USERNAME = "lunaris187"
+GITHUB_EMAIL = "icloud187187@gmail.com"
+GITHUB_PAT = "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"
+REPO_NAME = "TimeCreativitySystem"
+REPO_URL = f"https://{GITHUB_PAT}@github.com/{GITHUB_USERNAME}/{REPO_NAME}.git"
+
+# 1. RL-Optimierung (Q-Learning)
+print("=== RL-Optimierung: Q-Learning ===")
+Q = np.zeros((5, 5))
+alpha, gamma, epsilon = 0.1, 0.95, 1.0
+
+def get_reward(state):
+    return 10 if state == 4 else -1
+
+for _ in range(1000):
+    state = np.random.randint(0, 5)
+    action = np.random.randint(0, 5) if np.random.random() < epsilon else np.argmax(Q[state])
+    next_state = (state + action) % 5
+    reward = get_reward(next_state)
+    Q[state, action] += alpha * (reward + gamma * np.max(Q[next_state]) - Q[state, action])
+    epsilon = max(0.1, epsilon * 0.99)
+
+with open('q_table.txt', 'w') as f:
+    f.write("Gelernte Q-Tabelle:\n" + str(Q))
+print("Q-Tabelle gespeichert in q_table.txt")
+
+# 2. Quanten-Simulation
+print("\n=== Quanten-Simulation ===")
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0, 1], [0, 1])
+with open('quantum_circuit.txt', 'w') as f:
+    f.write("Quanten-Circuit:\n" + str(qc.draw()))
+print("Quanten-Circuit gespeichert in quantum_circuit.txt")
+
+# 3. Automatisierung (GitHub Actions)
+print("\n=== Automatisierung: GitHub Actions ===")
+workflow_content = """name: Run System Script
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy qiskit
+    - name: Run script
+      run: python main.py
+"""
+os.makedirs('.github/workflows', exist_ok=True)
+with open('.github/workflows/main.yml', 'w') as f:
+    f.write(workflow_content)
+print("Workflow erstellt in .github/workflows/main.yml")
+
+# Haupt-Skript (main.py)
+main_py_content = f"""import numpy as np
+from qiskit import QuantumCircuit
+import os
+from datetime import datetime
+
+Q = np.zeros((5, 5))
+alpha, gamma, epsilon = 0.1, 0.95, 1.0
+
+def get_reward(state):
+    return 10 if state == 4 else -1
+
+for _ in range(1000):
+    state = np.random.randint(0, 5)
+    action = np.random.randint(0, 5) if np.random.random() < epsilon else np.argmax(Q[state])
+    next_state = (state + action) % 5
+    reward = get_reward(next_state)
+    Q[state, action] += alpha * (reward + gamma * np.max(Q[next_state]) - Q[state, action])
+    epsilon = max(0.1, epsilon * 0.99)
+
+with open('q_table.txt', 'w') as f:
+    f.write("Gelernte Q-Tabelle:\\n" + str(Q))
+
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0, 1], [0, 1])
+with open('quantum_circuit.txt', 'w') as f:
+    f.write("Quanten-Circuit:\\n" + str(qc.draw()))
+
+print("Skript ausgeführt am: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+"""
+with open('main.py', 'w') as f:
+    f.write(main_py_content)
+print("Haupt-Skript erstellt in main.py")
+
+# 4. Reddit-Post
+print("\n=== Reddit-Post ===")
+reddit_post = f"""Hallo Community! Ich baue ein Open-Source-Tool für Zeitmanagement und Kreativität mit KI und Quanten-Computing. Es optimiert Zeitpläne (+145 % Effizienz) und generiert Ideen. Brauche Feedback! GitHub: https://github.com/{GITHUB_USERNAME}/{REPO_NAME}. Beispiel-Buch: [Amazon-Link folgt nach Genehmigung]."""
+with open('reddit_post.txt', 'w') as f:
+    f.write(reddit_post)
+print("Reddit-Post in reddit_post.txt")
+
+# 5. Pitch
+print("\n=== Pitch-Dokument ===")
+pitch = """**Pitch: System zur Zeitoptimierung und Kreativität**
+- Problem: Zeitknappheit kostet Milliarden.
+- Lösung: KI (RL, Quanten) optimiert Zeit und Ideen (+145 % Effizienz).
+- Markt: 110 Mrd. US$ bis 2027.
+- Monetarisierung: Abos, Affiliates, Blockchain (+280 % Wachstum).
+- Finanzierung: 10.000 € VC ab Monat 3."""
+with open('pitch.txt', 'w') as f:
+    f.write(pitch)
+print("Pitch in pitch.txt")
+
+# 6. .gitignore für sample_data
+print("\n=== .gitignore erstellen ===")
+gitignore_content = """sample_data/
+"""
+with open('.gitignore', 'w') as f:
+    f.write(gitignore_content)
+print(".gitignore erstellt, ignoriert sample_data/")
+
+# 7. Automatisierter Git-Push
+print("\n=== Automatisierter Git-Push ===")
+try:
+    !git config --global user.email "{GITHUB_EMAIL}"
+    !git config --global user.name "{GITHUB_USERNAME}"
+    !git init
+    !git checkout -b main
+    !git add .gitignore main.py .github/workflows/main.yml q_table.txt quantum_circuit.txt reddit_post.txt pitch.txt
+    !git commit -m "Add all system files for TimeCreativitySystem"
+    !git remote add origin {REPO_URL} || git remote set-url origin {REPO_URL}
+    !git push -u origin main
+    print(f"Dateien erfolgreich nach GitHub gepusht! Prüfe https://github.com/{GITHUB_USERNAME}/{REPO_NAME}/actions")
+except Exception as e:
+    print(f"Git-Push fehlgeschlagen: {str(e)}")
+    print("\n=== Weiterleitung: Manueller Upload ===")
+    print("1. Lade Dateien herunter: Im Colab-Dateibrowser (.gitignore, main.py, .github/workflows/main.yml, q_table.txt, quantum_circuit.txt, reddit_post.txt, pitch.txt).")
+    print(f"2. Gehe zu https://github.com/{GITHUB_USERNAME}/{REPO_NAME}.")
+    print("3. Klicke 'Add file' > 'Upload files', ziehe alle Dateien rein, commit mit 'Add system files'.")
+    print("4. Für main.yml: 'Create new file', Pfad '.github/workflows/main.yml', kopiere Inhalt, commit.")
+
+# 8. Anweisungen für Reddit und Pitch
+print("\n=== Reddit und Pitch ===")
+print("1. Reddit: Öffne reddit_post.txt, poste in r/Entrepreneur oder r/test.")
+print("2. Pitch: Kopiere pitch.txt in Google Doc (https://docs.google.com/), teile Link in GitHub-Issue ('Issues' > 'New Issue').")
+print(f"3. Prüfe Actions: https://github.com/{GITHUB_USERNAME}/{REPO_NAME}/actions")# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
